@@ -62,8 +62,8 @@ def avalilable_files():
         type_list = []
         tag_list= []
         for val in stream:
-            # taking video with 30 fps
-            if (val.fps == 30) or (val.fps == 60):
+            # taking video with fps <= 60
+            if val.fps <= 60:
                 res_list.append(val.resolution)
                 size_list.append(round(val.filesize/(1024*1024)))
                 type_list.append(val.mime_type.split('/')[1])
@@ -73,15 +73,19 @@ def avalilable_files():
         if "1080p" in res_list:
             var_dict[1080] = 'Available'
             index_1080 = res_list.index("1080p")
+            detail_dict['1080p'].update({'tag':tag_list[index_1080], 'type':type_list[index_1080], 'size':size_list[index_1080]})
         if "720p" in res_list:
             var_dict[720] = 'Available'
             index_720 = res_list.index("720p")
+            detail_dict['720p'].update({'tag':tag_list[index_720], 'type':type_list[index_720], 'size':size_list[index_720]})
         if "480p" in res_list:
             var_dict[480] = 'Available'
             index_480 = res_list.index("480p")    
+            detail_dict['480p'].update({'tag':tag_list[index_480], 'type':type_list[index_480], 'size':size_list[index_480]})
         if "360p" in res_list:
             var_dict[360] = 'Available'
             index_360 = res_list.index("360p")
+            detail_dict['360p'].update({'tag':tag_list[index_360], 'type':type_list[index_360], 'size':size_list[index_360]})
         
         ado_size = []
         ado_type = []
@@ -98,12 +102,13 @@ def avalilable_files():
         if ado_index:
             # check if audio is available
             var_dict['ado'] = 'Available'
+            detail_dict['ado'].update({'tag':ado_tag[ado_index], 'type':ado_type[ado_index], 'size':ado_size[ado_index]}) 
 
-        detail_dict['1080p'].update({'tag':tag_list[index_1080], 'type':type_list[index_1080], 'size':size_list[index_1080]})
-        detail_dict['720p'].update({'tag':tag_list[index_720], 'type':type_list[index_720], 'size':size_list[index_720]})
-        detail_dict['480p'].update({'tag':tag_list[index_480], 'type':type_list[index_480], 'size':size_list[index_480]})
-        detail_dict['360p'].update({'tag':tag_list[index_360], 'type':type_list[index_360], 'size':size_list[index_360]})  
-        detail_dict['ado'].update({'tag':ado_tag[ado_index], 'type':ado_type[ado_index], 'size':ado_size[ado_index]})  
+        # detail_dict['1080p'].update({'tag':tag_list[index_1080], 'type':type_list[index_1080], 'size':size_list[index_1080]})
+        # detail_dict['720p'].update({'tag':tag_list[index_720], 'type':type_list[index_720], 'size':size_list[index_720]})
+        # detail_dict['480p'].update({'tag':tag_list[index_480], 'type':type_list[index_480], 'size':size_list[index_480]})
+        # detail_dict['360p'].update({'tag':tag_list[index_360], 'type':type_list[index_360], 'size':size_list[index_360]})  
+        # detail_dict['ado'].update({'tag':ado_tag[ado_index], 'type':ado_type[ado_index], 'size':ado_size[ado_index]})  
         runn()  ## calling runn() function to show result
     except Exception:
         wrong_url = 'Wrong URL or not downloadable.'
