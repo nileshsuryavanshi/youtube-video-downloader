@@ -15,7 +15,7 @@ current_dir = os.getcwd()
 # size of the windows and title
 root.geometry('870x578')
 root.resizable(width=False, height=False)
-root.title('I-Tube -(YouTube video and audio downloader')
+root.title('I-Tube -(YouTube video and audio downloader)')
 
 # variable to show details of song
 var_dict = {1080:'', 720:'', 360:'', 480:'', 'ado':''}
@@ -35,11 +35,15 @@ def runn():
     Label(right_frame, text=var_dict['ado'], bg='grey').grid(row=10, column=1, pady=5, padx=2, sticky='nw')
 
     add_size = detail_dict['ado']['size']
-    Label(right_frame, text=str(detail_dict['1080p']['size']+add_size)+' MB', bg='grey').grid(row=5, column=2, pady=5, padx=2, sticky='nw')
-    Label(right_frame, text=str(detail_dict['720p']['size']+add_size)+' MB', bg='grey').grid(row=6, column=2, pady=5, padx=2, sticky='nw')
-    Label(right_frame, text=str(detail_dict['480p']['size']+add_size)+' MB', bg='grey').grid(row=7, column=2, pady=5, padx=2, sticky='nw')
-    Label(right_frame, text=str(detail_dict['360p']['size']+add_size)+' MB', bg='grey').grid(row=8, column=2, pady=5, padx=2, sticky='nw')
-    Label(right_frame, text=str(detail_dict['ado']['size'])+' MB', bg='grey').grid(row=10, column=2, pady=5, padx=2, sticky='nw')
+    if "1080p" in res_list:
+        Label(right_frame, text=str(round(detail_dict['1080p']['size']+add_size, 2))+' MB', bg='grey').grid(row=5, column=2, pady=5, padx=2, sticky='nw')
+    if "720p" in res_list:
+        Label(right_frame, text=str(round(detail_dict['720p']['size']+add_size, 2))+' MB', bg='grey').grid(row=6, column=2, pady=5, padx=2, sticky='nw')
+    if "480p" in res_list:
+        Label(right_frame, text=str(round(detail_dict['480p']['size']+add_size, 2))+' MB', bg='grey').grid(row=7, column=2, pady=5, padx=2, sticky='nw')
+    if "360p" in res_list:
+        Label(right_frame, text=str(round(detail_dict['360p']['size']+add_size, 2))+' MB', bg='grey').grid(row=8, column=2, pady=5, padx=2, sticky='nw')
+    Label(right_frame, text=str(round(detail_dict['ado']['size'], 2))+' MB', bg='grey').grid(row=10, column=2, pady=5, padx=2, sticky='nw')
 
 # to get progress bar when downloading
 def progress_Check(stream, chunk,bytes_remaining):
@@ -57,6 +61,7 @@ def avalilable_files():
         video = YouTube(url_value.get(), on_progress_callback=progress_Check)
         stream = video.streams.filter(only_video=True)
         valid_url = True
+        global res_list
         res_list = []
         size_list = []
         type_list = []
@@ -65,7 +70,7 @@ def avalilable_files():
             # taking video with fps <= 60
             if val.fps <= 60:
                 res_list.append(val.resolution)
-                size_list.append(round(val.filesize/(1024*1024)))
+                size_list.append(val.filesize/(1024*1024))
                 type_list.append(val.mime_type.split('/')[1])
                 tag_list.append(val.itag)
         
@@ -86,14 +91,14 @@ def avalilable_files():
             var_dict[360] = 'Available'
             index_360 = res_list.index("360p")
             detail_dict['360p'].update({'tag':tag_list[index_360], 'type':type_list[index_360], 'size':size_list[index_360]})
-        
+             
         ado_size = []
         ado_type = []
         ado_tag = []
         ado_qlt = []
         for val_ado in video.streams.filter(only_audio=True):
             # inserting audio information into lists
-            ado_size.append(round(val_ado.filesize/(1024*1024)))
+            ado_size.append(val_ado.filesize/(1024*1024))
             ado_type.append(val_ado.mime_type.split('/')[1])
             ado_tag.append(val_ado.itag)
             ado_qlt.append(int(val_ado.abr.split('k')[0]))
@@ -103,12 +108,7 @@ def avalilable_files():
             # check if audio is available
             var_dict['ado'] = 'Available'
             detail_dict['ado'].update({'tag':ado_tag[ado_index], 'type':ado_type[ado_index], 'size':ado_size[ado_index]}) 
-
-        # detail_dict['1080p'].update({'tag':tag_list[index_1080], 'type':type_list[index_1080], 'size':size_list[index_1080]})
-        # detail_dict['720p'].update({'tag':tag_list[index_720], 'type':type_list[index_720], 'size':size_list[index_720]})
-        # detail_dict['480p'].update({'tag':tag_list[index_480], 'type':type_list[index_480], 'size':size_list[index_480]})
-        # detail_dict['360p'].update({'tag':tag_list[index_360], 'type':type_list[index_360], 'size':size_list[index_360]})  
-        # detail_dict['ado'].update({'tag':ado_tag[ado_index], 'type':ado_type[ado_index], 'size':ado_size[ado_index]})  
+ 
         runn()  ## calling runn() function to show result
     except Exception:
         wrong_url = 'Wrong URL or not downloadable.'
@@ -138,13 +138,13 @@ def download():
             # download video file
             down_file = video.streams.get_by_itag(detail_dict[to_download]['tag'])
             down_file.download(directory, filename=file_name)          
-            video_address = directory + '/' + file_name + '.' + detail_dict[to_download]['type']
-            audio_file_name = 'audio_'+title_name
+            video_address = f"{directory}/{file_name}.{detail_dict[to_download]['type']}"
+            audio_file_name = f'audio_{title_name}'
 
             # download audio file
             down_file = video.streams.get_by_itag(detail_dict['ado']['tag'])
             down_file.download(directory, filename=audio_file_name)
-            audio_address = directory + '/' + audio_file_name + '.' + detail_dict['ado']['type']
+            audio_address = f"{directory}/{audio_file_name}.{detail_dict['ado']['type']}"
             vid_notify='Downloaded successfully.\nWait, press convert button to enable audio.'    
             messagebox.showinfo('I-Tube', vid_notify)
             video_downloaded = True 
@@ -157,7 +157,7 @@ def download():
             directory_ado = filedialog.askdirectory(initialdir='Choose path')
             title_name = re.sub(r'[^a-zA-Z0-9 ]','',video.title)
             title_name = title_name.replace(' ','_')
-            audio_file_name = 'audio_'+title_name
+            audio_file_name = f"audio_{title_name}"
 
             # downloading audio
             down_file = video.streams.get_by_itag(detail_dict['ado']['tag'])
@@ -181,9 +181,9 @@ def convert():
         if video_downloaded:
             if to_download in ('1080p', '720p', '480p', '360p'):
                 os.chdir(directory)
-                final_name = file_name +'_c' + '.' + detail_dict[to_download]['type']
-                v_name = file_name + '.' + detail_dict[to_download]['type']
-                a_name = audio_file_name + '.' + detail_dict['ado']['type']
+                final_name = f"{file_name}_c.{detail_dict[to_download]['type']}"
+                v_name = f"{file_name}.{detail_dict[to_download]['type']}"
+                a_name = f"{audio_file_name}.{detail_dict['ado']['type']}"
 
                 # merging audio and video files
                 cmd = f'ffmpeg -i {v_name} -i {a_name} -c:v copy -c:a  copy {final_name}'
@@ -200,8 +200,8 @@ def convert():
 
             elif to_download == 'ado':
                 os.chdir(directory_ado)
-                final_name = audio_file_name + '.mp3'
-                a_name = audio_file_name + '.' + detail_dict['ado']['type']
+                final_name = f"{audio_file_name}.mp3"
+                a_name = f"{audio_file_name}.{detail_dict['ado']['type']}"
 
                 # changing audio file formate to mp3
                 cmd_ado = f'ffmpeg -i {a_name} {final_name}'
