@@ -9,13 +9,13 @@ This program will help you to download youtube videos and audios from minimum to
 ![youtube-demo](https://user-images.githubusercontent.com/77235287/105701058-c188c600-5f2f-11eb-85b0-b833bba51da4.png)
 
 
-## Instruction to use
+## Instruction to use the program
 1. Copy the URL of youtube video you want to download and paste it in the input box.
 2. Press `See available files`, then wait for few seconds until results are shown.
 3. Choose any one option out of video or audio.
 4. Press the `Download` button and choose the path to store downloading file.
 5. Don't forget to hit `Convert` button to finish the process.
-6. After conversion gets completed, press `Restart` to use it again for downloading new vieo.
+6. After conversion gets completed, press `Restart` to use it again for downloading new video.
 
 ## Author
 - [@nileshsuryavanshi](https://www.github.com/nileshsuryavanshi)
